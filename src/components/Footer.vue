@@ -9,21 +9,21 @@
     >
       <v-btn
         icon
-        :to="{ name: 'home' }"
+        :to="{ name: 'Home' }"
       >
         <v-icon>mdi-home</v-icon>
       </v-btn>
 
       <v-btn
         icon
-        :to="{ name: 'add' }"
+        :to="{ name: 'AddMeme' }"
       >
         <v-icon>mdi-plus-circle</v-icon>
       </v-btn>
 
       <v-btn
         icon
-        :to="{ name: 'profile' }"
+        :to="{ name: 'Profile' }"
       >
         <v-icon>mdi-account</v-icon>
       </v-btn>
