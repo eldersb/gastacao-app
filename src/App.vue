@@ -1,30 +1,37 @@
 <template>
   <v-app>
 
-    <Header />
+    <Header v-if="showLayout" />
 
     <v-main>
       <v-container>
-        <h1 class="text-center mt-5">Layout base</h1>
+        <router-view />
       </v-container>
     </v-main>
 
-    <Footer />
 
+    <Footer v-if="showLayout" />
   </v-app>
 </template>
 
-
 <script>
-
-import Footer from './components/Footer.vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import Header from './components/Header.vue'
+import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
-  components: {
-    Header,
-    Footer
+  components: { Header, Footer },
+  setup() {
+    const route = useRoute()
+
+ 
+    const showLayout = computed(() => {
+      return route.name !== 'Login' && route.name !== 'Register'
+    })
+
+    return { showLayout }
   }
 }
 </script>
@@ -33,5 +40,4 @@ export default {
 .v-application {
   min-height: 100vh;
 }
-
 </style>
