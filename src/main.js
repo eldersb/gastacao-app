@@ -17,7 +17,12 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#1976D2'
+          primary: '#396b8a',   // Azul escuro
+          secondary: '#62beda', // Verde água
+          accent: '#ace2f4',    // Azul claro
+          background: '#fcfdfc',// Branco quase puro
+          warning: '#e69055',   // Laranja areia
+          info: '#f5cc8d',      // Bege claro
         }
       }
     }
