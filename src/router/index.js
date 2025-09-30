@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authService } from '@/services/authService'
 
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
 import FeedPage from '@/views/FeedPage.vue'
 import LoginPage from '@/views/Auth/LoginPage.vue'
@@ -23,27 +25,47 @@ const routes = [
         name: 'Profile',
         component: ProfilePage
       },
-      { path: 'adicionar',
+      {
+        path: 'adicionar',
         name: 'AddMeme',
         component: AddMeme
       },
     ]
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: LoginPage,
-  },
-  {
-    path: '/cadastro',
-    name: 'Register',
-    component: RegisterPage
+    path: '/',
+    component: AuthLayout,
+    children: [
+      {
+        path: 'login',
+        name: 'Login',
+        component: LoginPage
+      },
+      {
+        path: 'cadastro',
+        name: 'Register',
+        component: RegisterPage
+      }
+    ]
   }
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes
-})
+});
 
-export default router
+//aguardando firebase
+// router.beforeEach((to, from, next) => {
+//   const user = authService.getCurrentUser();
+//
+//   const authPages = ['Login', 'Register'];
+//
+//   if (authPages.includes(to.name) && user) {
+//     return next({ name: 'Home' });
+//   }
+//
+//   next();
+// });
+
+export default router;
