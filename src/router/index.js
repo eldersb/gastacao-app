@@ -15,57 +15,42 @@ const routes = [
     path: '/',
     component: DefaultLayout,
     children: [
-      {
-        path: '',
-        name: 'Home',
-        component: FeedPage
-      },
-      {
-        path: 'perfil',
-        name: 'Profile',
-        component: ProfilePage
-      },
-      {
-        path: 'adicionar',
-        name: 'AddMeme',
-        component: AddMeme
-      },
+      { path: '', name: 'Home', component: FeedPage },
+      { path: 'perfil', name: 'Profile', component: ProfilePage },
+      { path: 'adicionar', name: 'AddMeme', component: AddMeme },
     ]
   },
   {
     path: '/',
     component: AuthLayout,
     children: [
-      {
-        path: 'login',
-        name: 'Login',
-        component: LoginPage
-      },
-      {
-        path: 'cadastro',
-        name: 'Register',
-        component: RegisterPage
-      }
+      { path: 'login', name: 'Login', component: LoginPage },
+      { path: 'cadastro', name: 'Register', component: RegisterPage }
     ]
   }
-];
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach(async (to, from, next) => {
+  try {
+    const user = await authService.getCurrentUser(); // pode ser async
+
+    const publicPages = ['Login', 'Register'];
+
+    if (!publicPages.includes(to.name) && !user) return next({ name: 'Login' });
+    if (publicPages.includes(to.name) && user) return next({ name: 'Home' });
+
+    return next();
+  } catch (error) {
+    console.error("Erro de autenticação:", error);
+
+    return next({ name: 'Login' });
+  }
 });
 
-//aguardando firebase
-// router.beforeEach((to, from, next) => {
-//   const user = authService.getCurrentUser();
-//
-//   const authPages = ['Login', 'Register'];
-//
-//   if (authPages.includes(to.name) && user) {
-//     return next({ name: 'Home' });
-//   }
-//
-//   next();
-// });
 
-export default router;
+export default router
