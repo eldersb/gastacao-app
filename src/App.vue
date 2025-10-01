@@ -1,23 +1,9 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container>
-        <v-btn color="primary">Botão Vuetify</v-btn>
-      </v-container>
-    </v-main>
-  </v-app>
+  <router-view />
 </template>
 
-
 <script>
-
 export default {
-  name: 'App',
-  components: {
-  }
+  name: 'App'
 }
 </script>
-
-<style>
-
-</style>
