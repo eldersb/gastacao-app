@@ -53,14 +53,38 @@
 </template>
 
 <script>
+import { addMemeService } from "@/services/addMemeService";
+
 export default {
   name: 'AddMeme',
+    data() {
+    return {
+      title: '',
+    };
+  },
     methods: {
     triggerUpload() {
       this.$refs.fileInput.click(); 
     },
+
+    async publishMeme() {
+      if (!this.title) {
+        alert('Por favor, insira um título para o meme.');
+        return;
+      }
+
+      try {
+        const id = await addMemeService.saveMeme(this.title);
+        alert("Título salvo com sucesso! ID: " + id);
+        this.title = "";
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao salvar título!");
+      }
+    }
   }
 }
+
 
 </script>
 
