@@ -70,7 +70,7 @@
 </template>
 
 <script>
-//import { authService } from "@/services/authService";
+import { authService } from "@/services/authService";
 import { emailRules, passwordRules } from "@/utils/rules";
 
 export default {
@@ -94,13 +94,11 @@ export default {
         this.loading = true;
 
         try {
-          // await authService.login(this.email, this.password);
-          // this.$router.push({ name: "Home" });
-          alert("Login");
+          await authService.login(this.email, this.password);
+          this.$router.push({ name: "Home" });
         } catch (erro) {
-          alert("Login deu errado: " + erro.message);
-        } finally {
-          this.loading = false;
+          this.loading = false
+          console.log(erro)
         }
       }
     },

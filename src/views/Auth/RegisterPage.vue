@@ -89,7 +89,7 @@
 </template>
 
 <script>
-//import { authService } from "@/services/authService";
+import { authService } from "@/services/authService";
 import { emailRules, passwordRules, confirmPasswordRules, nameRules } from "@/utils/rules";
 
 export default {
@@ -122,16 +122,15 @@ export default {
         this.loading = true
 
         try {
-          // await authService.register(
-          //     this.username,
-          //     this.email,
-          //     this.password
-          // );
-          // this.$router.push({ name: "Login" });
-          alert('Registro')
+          await authService.register(
+              this.email,
+              this.password,
+              this.username
+          );
+          this.$router.push({ name: "Login" });
         }catch (erro){
           this.loading = false
-          alert('Registro deu errado: ' + erro)
+          console.log(erro)
         }
       }
     }
