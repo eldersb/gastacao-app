@@ -1,10 +1,31 @@
 <template>
   <div class="register-container">
     <v-card class="register-card" elevation="12" rounded="xl">
-      <v-card-title class="jus">Registro</v-card-title>
+      <v-card-title>Registro</v-card-title>
 
       <v-card-text class="pa-6">
         <v-form ref="form" v-model="valid" @submit.prevent="handleRegister">
+
+          <p class="text-body-1 mb-3">Escolha um avatar</p>
+          <v-row>
+            <v-col
+                v-for="(avatar, index) in avatars"
+                :key="index"
+                cols="4"
+                class="d-flex justify-center mb-6"
+            >
+              <div
+                  class="cursor-pointer"
+                  :class="{ 'selected-avatar': selectedAvatarIndex === index }"
+                  @click="selectedAvatarIndex = index"
+              >
+                <v-avatar size="64">
+                  <v-img :src="avatar"/>
+                </v-avatar>
+              </div>
+            </v-col>
+          </v-row>
+
           <v-text-field
               v-model="username"
               label="Nome Completo"
@@ -89,8 +110,9 @@
 </template>
 
 <script>
-import { authService } from "@/services/authService";
-import { emailRules, passwordRules, confirmPasswordRules, nameRules } from "@/utils/rules";
+import {authService} from "@/services/authService";
+import {emailRules, passwordRules, confirmPasswordRules, nameRules} from "@/utils/rules";
+import {avatars} from "@/utils/avatars";
 
 export default {
   name: 'RegisterPage',
@@ -107,6 +129,8 @@ export default {
       nameRules,
       emailRules,
       passwordRules,
+      selectedAvatarIndex: null,
+      avatars: avatars
     }
   },
   computed: {
@@ -116,48 +140,45 @@ export default {
   },
   methods: {
     async handleRegister() {
-      const { valid } = await this.$refs.form.validate()
+      const {valid} = await this.$refs.form.validate();
 
-      if (valid) {
-        this.loading = true
+      if (!valid) return;
 
-        try {
-          await authService.register(
-              this.email,
-              this.password,
-              this.username
-          );
-          this.$router.push({ name: "Login" });
-        }catch (erro){
-          this.loading = false
-          console.log(erro)
-        }
+      if (this.selectedAvatarIndex === null) {
+        alert("Selecione um avatar");
+        return;
+      }
+
+      this.loading = true;
+
+      try {
+        const selectedAvatar = this.avatars[this.selectedAvatarIndex].id;
+        await authService.register(
+            this.email,
+            this.password,
+            this.username,
+            selectedAvatar
+        );
+        this.$router.push({name: "Login"});
+      } catch (erro) {
+        console.error(erro);
+        this.loading = false;
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.register-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  overflow-y: auto;
+.selected-avatar {
+  outline: 4px solid #1976d2;
+  outline-offset: 2px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(25, 118, 210, 0.5);
 }
 
-.register-card {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  background: white;
-  margin-bottom: 24px;
-}
 
-.v-card-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  text-align: center;
-  color: #333;
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

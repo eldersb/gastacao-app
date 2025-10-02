@@ -1,10 +1,10 @@
-import { auth, db } from "./firebase";
+import {auth, db} from "./firebase";
 import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut
 } from "firebase/auth";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import {doc, setDoc, getDoc, serverTimestamp} from "firebase/firestore";
 
 const USERS_COLLECTION = "users";
 
@@ -18,7 +18,7 @@ export const authService = {
         }
     },
 
-    async register(email, password, username) {
+    async register(email, password, username, avatarId) {
         try {
             console.log('passou 1')
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -28,6 +28,7 @@ export const authService = {
                 uid: user.uid,
                 email: email,
                 username: username,
+                avatarId: avatarId,
                 createdAt: serverTimestamp(),
                 isActive: true
             });
