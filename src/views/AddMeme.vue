@@ -15,29 +15,55 @@
 
       <!-- Tipo de mídia -->
       <v-btn-toggle
+        v-model="mediaType"
         mandatory
-        class="mb-3 w-100 media-toggle"
+        class="mb-3 w-100 justify-center media-toggle"
       >
-        <v-btn value="image" variant="text">📷 Imagem</v-btn>
-        <v-btn value="audio" variant="text">🎵 Áudio</v-btn>
-        <v-btn value="video" variant="text">🎬 Vídeo</v-btn>
+        <v-btn value="image" variant="text" prepend-icon="mdi-image"></v-btn>
+        <v-btn value="audio" variant="text" prepend-icon="mdi-music"></v-btn>
+        <v-btn value="video" variant="text" prepend-icon="mdi-video"></v-btn>
       </v-btn-toggle>
 
-      <!-- Upload -->
-          <div
+      <!-- Upload de arquivo (imagem/áudio) -->
+      <div
+        v-if="mediaType !== 'video'"
         class="upload-area mb-4 d-flex flex-column align-center justify-center"
         @click="triggerUpload"
-        @dragover.prevent
-        @drop.prevent="handleDrop"
       >
-        <v-icon size="40" color="grey">mdi-upload</v-icon>
-        <p class="text-grey text-center">Clique para fazer upload </p>
+        <template v-if="previewUrl">
+          <img
+            v-if="mediaType === 'image'"
+            :src="previewUrl"
+            class="preview"
+          />
+          <audio
+            v-else-if="mediaType === 'audio'"
+            :src="previewUrl"
+            controls
+          ></audio>
+        </template>
+        <template v-else>
+          <v-icon size="40" color="grey">mdi-upload</v-icon>
+          <p class="text-grey text-center">Clique para fazer upload</p>
+        </template>
+
         <input
           type="file"
           ref="fileInput"
-          class="d-none"     
+          class="d-none"
+          @change="handleFileChange"
         />
       </div>
+
+      <!-- Campo de URL (vídeo) -->
+      <v-text-field
+        v-if="mediaType === 'video'"
+        v-model="videoUrl"
+        label="URL do Vídeo"
+        placeholder="Cole a URL do vídeo (YouTube, etc.)"
+        variant="outlined"
+        class="mb-4"
+      ></v-text-field>
 
       <!-- Botão publicar -->
       <v-btn
@@ -56,52 +82,78 @@
 import { addMemeService } from "@/services/addMemeService";
 
 export default {
-  name: 'AddMeme',
-    data() {
+  name: "AddMeme",
+  data() {
     return {
-      title: '',
+      title: "",
+      file: null,
+      previewUrl: null,
+      videoUrl: "",
+      mediaType: "image",
     };
   },
-    methods: {
+  methods: {
     triggerUpload() {
-      this.$refs.fileInput.click(); 
+      this.$refs.fileInput.click();
+    },
+
+    handleFileChange(event) {
+      this.file = event.target.files[0];
+
+      if (this.file) {
+        this.previewUrl = URL.createObjectURL(this.file);
+      }
     },
 
     async publishMeme() {
       if (!this.title) {
-        alert('Por favor, insira um título para o meme.');
+        alert("Por favor, insira um título para o meme.");
+        return;
+      }
+
+      if (this.mediaType === "video" && !this.videoUrl) {
+        alert("Por favor, insira a URL do vídeo.");
         return;
       }
 
       try {
-        const id = await addMemeService.saveMeme(this.title);
-        alert("Título salvo com sucesso! ID: " + id);
+        let id;
+
+        if (this.mediaType === "video") {
+          id = await addMemeService.saveMeme(this.title, null, this.videoUrl);
+        } else {
+          id = await addMemeService.saveMeme(this.title, this.file);
+        }
+
+        alert("Meme publicado com sucesso! ID: " + id);
+
         this.title = "";
+        this.file = null;
+        this.previewUrl = null;
+        this.videoUrl = "";
+        this.$refs.fileInput.value = null;
       } catch (err) {
         console.error(err);
-        alert("Erro ao salvar título!");
+        alert("Erro ao publicar meme!");
       }
-    }
-  }
-}
-
-
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 .add-container {
-  background-color: #f0f8ff; 
-  height: 100vh;          
-  align-items: center;        
-  justify-content: center;    
+  background-color: #f0f8ff;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
 }
 
 .media-toggle {
-  border: 2px solid transparent; 
-  border-radius: 12px;  
-  background-color: #f0f8ff;     
-  overflow: hidden;          
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background-color: #f0f8ff;
+  overflow: hidden;
 }
 
 .upload-area {
@@ -110,19 +162,25 @@ export default {
   padding: 30px;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
+  text-align: center;
 }
 
 .upload-area:hover {
   background-color: #f5f5f5;
 }
 
-.btn-meme {
-  border: 2px solid transparent; 
-  border-radius: 12px;  
-  background-color: #18a3ff;     
-  overflow: hidden;   
-  color: white;
+.preview {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
 }
 
-
+.btn-meme {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background-color: #18a3ff;
+  overflow: hidden;
+  color: white;
+}
 </style>
