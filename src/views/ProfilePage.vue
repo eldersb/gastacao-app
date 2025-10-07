@@ -9,7 +9,7 @@
       <div class="d-flex justify-center">
         <v-avatar size="100">
           <v-img
-              :src="avatarUrl"
+              :src="userStore.avatarUrl"
               alt="Foto do usuário"
           />
         </v-avatar>
@@ -19,12 +19,12 @@
         <v-list lines="one">
           <v-list-item>
             <v-list-item-title>Nome</v-list-item-title>
-            <v-list-item-subtitle>{{ user.name }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ userStore.name }}</v-list-item-subtitle>
           </v-list-item>
 
           <v-list-item>
             <v-list-item-title>Email</v-list-item-title>
-            <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ userStore.email }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -39,25 +39,21 @@
   </v-container>
 </template>
 <script>
-import {getAvatarById} from "@/utils/avatars";
+import { useUserStore } from '@/stores/userStore';
 
 export default {
   name: "ProfilePage",
+
   data() {
     return {
-      user: {
-        name: "mock da Silva",
-        email: "mock.silva@example.com",
-        avatar: 3
-      }
-    };
+      userStore: useUserStore()
+    }
   },
-  computed: {
-    avatarUrl() {
-      const avatar = getAvatarById(this.user.avatar);
-      return avatar ? avatar.src : null;
+  methods: {
+    logout() {
+      this.userStore.clearUser()
     }
   }
-};
+}
 </script>
 

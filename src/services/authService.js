@@ -12,6 +12,10 @@ export const authService = {
     async login(email, password) {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log(userCredential);
+            await console.log(this.getCurrentUser());
+
+            
             return userCredential.user;
         } catch (error) {
             throw new Error(error.message);
