@@ -1,6 +1,7 @@
 <template>
   <v-app-bar app color="primary" dark>
     <div class="d-flex align-center justify-space-between w-100 px-4">
+      <div class="d-flex align-center">
       <v-avatar size="55">
         <v-img
             v-if="!isProfilePage"
@@ -10,17 +11,26 @@
         />
       </v-avatar>
 
-      <v-toolbar-title class="text-h6 text-center flex-grow-1">
-        Gastação
+      <v-toolbar-title class="text-h6 ms-3">
+        GastaçãoApp
       </v-toolbar-title>
-
-      <div style="width:44px"></div>
     </div>
+
+      <v-btn
+          icon
+          variant="text"
+          color="white"
+          @click="logout"
+        >
+          <v-icon>mdi-logout</v-icon>
+        </v-btn>
+        </div>
   </v-app-bar>
 </template>
 
 <script>
 import {useUserStore} from '@/stores/userStore';
+import {authService} from "@/services/authService";
 
 export default {
   name: "AppHeader",
@@ -29,10 +39,15 @@ export default {
       userStore: useUserStore()
     };
   },
-
   computed: {
     isProfilePage() {
       return this.$route.name === 'Profile'
+    }
+  },
+  methods: {
+    logout() {
+      authService.logout();
+      this.$router.push({ name: 'Login' });
     }
   }
 

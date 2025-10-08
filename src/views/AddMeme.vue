@@ -1,16 +1,15 @@
 <template>
-  <v-container class="d-flex justify-center pa-4 add-container">
-    <v-card width="400" class="pa-4 rounded-xl">
+  <v-container class="d-flex mt-5">
+    <v-card width="400" class="pa-4 rounded-xl mt-5">
       <v-card-title class="text-center">Criar Novo Meme</v-card-title>
 
-      <!-- Título -->
       <v-text-field
         v-model="title"
         label="Título do Meme"
         placeholder="Digite um título engraçado..."
         counter="100"
         variant="outlined"
-        class="mb-3 mt-3"
+        class="mt-3"
         :error-messages="errors.title ? [errors.title] : []"
       ></v-text-field>
 
@@ -20,9 +19,9 @@
         mandatory
         class="mb-3 w-100 justify-center media-toggle"
       >
-        <v-btn value="image" variant="text" prepend-icon="mdi-image"></v-btn>
-        <v-btn value="audio" variant="text" prepend-icon="mdi-music"></v-btn>
-        <v-btn value="video" variant="text" prepend-icon="mdi-video"></v-btn>
+        <v-btn class="flex-grow-1 white-btn" value="image" variant="text" prepend-icon="mdi-image" ></v-btn>
+        <v-btn class="flex-grow-1 white-btn" value="audio" variant="text" prepend-icon="mdi-music"></v-btn>
+        <v-btn class="flex-grow-1 white-btn" value="video" variant="text" prepend-icon="mdi-video"></v-btn>
       </v-btn-toggle>
 
       <!-- Upload de imagem -->
@@ -102,7 +101,7 @@
         :error-messages="errors.videoUrl ? [errors.videoUrl] : []"
       ></v-text-field>
 
-      <!-- Botão publicar -->
+      
       <v-btn
         block
         variant="text"
@@ -252,17 +251,11 @@ export default {
 </script>
 
 <style scoped>
-.add-container {
-  background-color: #f0f8ff;
-  height: 100vh;
-  align-items: center;
-  justify-content: center;
-}
 
 .media-toggle {
   border: 2px solid transparent;
   border-radius: 12px;
-  background-color: #f0f8ff;
+  background-color: #396b8a;
   overflow: hidden;
   gap: 16px;
 }
@@ -304,8 +297,12 @@ export default {
 .btn-meme {
   border: 2px solid transparent;
   border-radius: 12px;
-  background-color: #18a3ff;
+  background-color: #396b8a;
   overflow: hidden;
+  color: white;
+}
+
+.white-btn {
   color: white;
 }
 </style>
