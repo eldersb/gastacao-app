@@ -11,6 +11,7 @@
         counter="100"
         variant="outlined"
         class="mb-3 mt-3"
+        :error-messages="errors.title ? [errors.title] : []"
       ></v-text-field>
 
       <!-- Tipo de mídia -->
@@ -31,6 +32,7 @@
         @click="triggerUpload"
       >
         <template v-if="previewUrl">
+           <div class="preview-wrapper">
           <img
             v-if="mediaType === 'image'"
             :src="previewUrl"
@@ -41,6 +43,16 @@
             :src="previewUrl"
             controls
           ></audio>
+            
+          <v-icon
+        class="remove-icon"
+        color="red"
+        size="28"
+        @click.stop="removeImage"
+      >
+        mdi-close-circle
+      </v-icon>
+      </div>
         </template>
         <template v-else>
           <v-icon size="40" color="grey">mdi-upload</v-icon>
@@ -53,6 +65,7 @@
           class="d-none"
           @change="handleFileChange"
         />
+        <span v-if="errors.file" class="text-error text-caption mt-1">{{ errors.file }}</span>
       </div>
 
       <!-- Campo de URL (vídeo) -->
@@ -63,6 +76,7 @@
         placeholder="Cole a URL do vídeo (YouTube, etc.)"
         variant="outlined"
         class="mb-4"
+        :error-messages="errors.videoUrl ? [errors.videoUrl] : []"
       ></v-text-field>
 
       <!-- Botão publicar -->
@@ -74,6 +88,20 @@
       >
         Publicar Meme
       </v-btn>
+
+      <!-- Dialog -->
+      <v-dialog v-model="dialog" max-width="400">
+        <v-card>
+          <v-card-title class="text-center" :class="dialogSuccess ? 'text-green' : 'text-red'">
+            {{ dialogSuccess ? 'Sucesso' : 'Erro' }}
+          </v-card-title>
+          <v-card-text>{{ dialogMessage }}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialog = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card>
   </v-container>
 </template>
@@ -90,43 +118,63 @@ export default {
       previewUrl: null,
       videoUrl: "",
       mediaType: "image",
+      errors: { // <-- agora o objeto está garantido desde o início
+        title: "",
+        file: "",
+        videoUrl: "",
+      },
+      dialog: false,
+      dialogMessage: "",
+      dialogSuccess: false,
     };
   },
   methods: {
+    removeImage() {
+      this.file = null;
+      this.previewUrl = null;
+      this.$refs.fileInput.value = null;
+    },
+
     triggerUpload() {
       this.$refs.fileInput.click();
     },
 
     handleFileChange(event) {
       this.file = event.target.files[0];
-
       if (this.file) {
         this.previewUrl = URL.createObjectURL(this.file);
       }
     },
 
     async publishMeme() {
-      if (!this.title) {
-        alert("Por favor, insira um título para o meme.");
-        return;
-      }
+  
+      this.errors = { title: "", file: "", videoUrl: "" };
 
-      if (this.mediaType === "video" && !this.videoUrl) {
-        alert("Por favor, insira a URL do vídeo.");
+      if (!this.title) this.errors.title = "O título é obrigatório.";
+      if (this.mediaType === "video" && !this.videoUrl)
+        this.errors.videoUrl = "A URL do vídeo é obrigatória.";
+      if (this.mediaType !== "video" && !this.file)
+        this.errors.file = "É necessário enviar um arquivo.";
+
+      
+      if (this.errors.title || this.errors.file || this.errors.videoUrl) {
+        this.dialogMessage = "Preencha todos os campos obrigatórios antes de publicar.";
+        this.dialogSuccess = false;
+        this.dialog = true;
         return;
       }
 
       try {
         let id;
-
         if (this.mediaType === "video") {
           id = await addMemeService.saveMeme(this.title, null, this.videoUrl);
         } else {
           id = await addMemeService.saveMeme(this.title, this.file);
         }
 
-        alert("Meme publicado com sucesso! ID: " + id);
-
+        this.dialogMessage = "Meme publicado com sucesso!";
+        this.dialogSuccess = true;
+        this.dialog = true;
         this.title = "";
         this.file = null;
         this.previewUrl = null;
@@ -134,7 +182,9 @@ export default {
         this.$refs.fileInput.value = null;
       } catch (err) {
         console.error(err);
-        alert("Erro ao publicar meme!");
+        this.dialogMessage = "Erro ao publicar meme!";
+        this.dialogSuccess = false;
+        this.dialog = true;
       }
     },
   },
@@ -154,6 +204,7 @@ export default {
   border-radius: 12px;
   background-color: #f0f8ff;
   overflow: hidden;
+  gap: 16px;
 }
 
 .upload-area {
@@ -183,4 +234,18 @@ export default {
   overflow: hidden;
   color: white;
 }
+.preview-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.remove-icon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 50%;
+}
 </style>
+
