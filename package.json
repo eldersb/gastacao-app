@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "axios": "^1.12.2",
+    "cloudinary": "^2.7.0",
     "core-js": "^3.8.3",
     "firebase": "^12.3.0",
     "pinia": "^3.0.3",
