@@ -70,8 +70,9 @@
 </template>
 
 <script>
-import { authService } from "@/services/authService";
-import { emailRules, passwordRules } from "@/utils/rules";
+import {authService} from "@/services/authService";
+import {emailRules, passwordRules} from "@/utils/rules";
+import {useUserStore} from "@/stores/userStore";
 
 export default {
   name: "LoginPage",
@@ -88,14 +89,17 @@ export default {
   },
   methods: {
     async handleLogin() {
-      const { valid } = await this.$refs.form.validate();
+      const {valid} = await this.$refs.form.validate();
 
       if (valid) {
         this.loading = true;
 
         try {
-          await authService.login(this.email, this.password);
-          this.$router.push({ name: "Home" });
+          const userStore = useUserStore();
+          const user = await authService.login(this.email, this.password);
+          userStore.setUser(user);
+
+          this.$router.push({name: "Home"});
         } catch (erro) {
           this.loading = false
           console.log(erro)
