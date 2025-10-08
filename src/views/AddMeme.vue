@@ -111,19 +111,11 @@
         Publicar Meme
       </v-btn>
 
-      <!-- Dialog -->
-      <v-dialog v-model="dialog" max-width="400">
-        <v-card>
-          <v-card-title class="text-center" :class="dialogSuccess ? 'text-green' : 'text-red'">
-            {{ dialogSuccess ? 'Sucesso' : 'Erro' }}
-          </v-card-title>
-          <v-card-text>{{ dialogMessage }}</v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="dialog = false">OK</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+     <DialogMessage 
+        v-model="dialog"
+        :message="dialogMessage"
+        :success="dialogSuccess"
+      />
 
     </v-card>
   </v-container>
@@ -131,9 +123,14 @@
 
 <script>
 import { addMemeService } from "@/services/addMemeService";
+import DialogMessage from "@/components/DialogMessage.vue";
+
 
 export default {
   name: "AddMeme",
+   components: {
+    DialogMessage
+  },
   data() {
     return {
       title: "",
@@ -143,11 +140,9 @@ export default {
       audioPreview: null,
       videoUrl: "",
       mediaType: "image",
-
       dialog: false,
       dialogMessage: "",
       dialogSuccess: false,
-
       errors: {
         title: "",
         file: "",
