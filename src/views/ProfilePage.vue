@@ -39,7 +39,8 @@
   </v-container>
 </template>
 <script>
-import { useUserStore } from '@/stores/userStore';
+import {useUserStore} from '@/stores/userStore';
+import {authService} from "@/services/authService";
 
 export default {
   name: "ProfilePage",
@@ -51,7 +52,8 @@ export default {
   },
   methods: {
     logout() {
-      this.userStore.clearUser()
+      authService.logout()
+      this.$router.push({name: 'Login'});
     }
   }
 }

@@ -8,5 +8,7 @@ export const avatars = [
 ];
 
 export function getAvatarById(id) {
-    return avatars.find(a => a.id === id) || null;
+    const avatar = avatars.find(a => a.id === id);
+    return avatar ? avatar.src : null;
 }
+
