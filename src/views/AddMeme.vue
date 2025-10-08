@@ -25,34 +25,24 @@
         <v-btn value="video" variant="text" prepend-icon="mdi-video"></v-btn>
       </v-btn-toggle>
 
-      <!-- Upload de arquivo (imagem/áudio) -->
+      <!-- Upload de imagem -->
       <div
-        v-if="mediaType !== 'video'"
+        v-if="mediaType === 'image'"
         class="upload-area mb-4 d-flex flex-column align-center justify-center"
-        @click="triggerUpload"
+        @click="triggerUpload('image')"
       >
-        <template v-if="previewUrl">
-           <div class="preview-wrapper">
-          <img
-            v-if="mediaType === 'image'"
-            :src="previewUrl"
-            class="preview"
-          />
-          <audio
-            v-else-if="mediaType === 'audio'"
-            :src="previewUrl"
-            controls
-          ></audio>
-            
-          <v-icon
-        class="remove-icon"
-        color="red"
-        size="28"
-        @click.stop="removeImage"
-      >
-        mdi-close-circle
-      </v-icon>
-      </div>
+        <template v-if="imagePreview">
+          <div class="preview-wrapper">
+            <img :src="imagePreview" class="preview" />
+            <v-icon
+              class="remove-icon"
+              color="red"
+              size="28"
+              @click.stop="removeImage"
+            >
+              mdi-close-circle
+            </v-icon>
+          </div>
         </template>
         <template v-else>
           <v-icon size="40" color="grey">mdi-upload</v-icon>
@@ -61,9 +51,42 @@
 
         <input
           type="file"
-          ref="fileInput"
+          ref="imageInput"
           class="d-none"
-          @change="handleFileChange"
+          @change="handleImageChange"
+        />
+        <span v-if="errors.file" class="text-error text-caption mt-1">{{ errors.file }}</span>
+      </div>
+
+      <!-- Upload de áudio -->
+      <div
+        v-else-if="mediaType === 'audio'"
+        class="upload-area mb-4 d-flex flex-column align-center justify-center"
+        @click="triggerUpload('audio')"
+      >
+        <template v-if="audioPreview">
+          <div class="preview-wrapper-audio">
+            <audio :src="audioPreview" controls></audio>
+            <v-icon
+              class="remove-icon-audio"
+              color="red"
+              size="28"
+              @click.stop="removeAudio"
+            >
+              mdi-close-circle
+            </v-icon>
+          </div>
+        </template>
+        <template v-else>
+          <v-icon size="40" color="grey">mdi-upload</v-icon>
+          <p class="text-grey text-center">Clique para fazer upload</p>
+        </template>
+
+        <input
+          type="file"
+          ref="audioInput"
+          class="d-none"
+          @change="handleAudioChange"
         />
         <span v-if="errors.file" class="text-error text-caption mt-1">{{ errors.file }}</span>
       </div>
@@ -102,6 +125,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
     </v-card>
   </v-container>
 </template>
@@ -114,49 +138,76 @@ export default {
   data() {
     return {
       title: "",
-      file: null,
-      previewUrl: null,
+      imageFile: null,
+      imagePreview: null,
+      audioFile: null,
+      audioPreview: null,
       videoUrl: "",
       mediaType: "image",
-      errors: { // <-- agora o objeto está garantido desde o início
+
+      dialog: false,
+      dialogMessage: "",
+      dialogSuccess: false,
+
+      errors: {
         title: "",
         file: "",
         videoUrl: "",
       },
-      dialog: false,
-      dialogMessage: "",
-      dialogSuccess: false,
     };
   },
   methods: {
-    removeImage() {
-      this.file = null;
-      this.previewUrl = null;
-      this.$refs.fileInput.value = null;
+    triggerUpload(type) {
+      if (type === "image" && this.$refs.imageInput) this.$refs.imageInput.click();
+      if (type === "audio" && this.$refs.audioInput) this.$refs.audioInput.click();
     },
 
-    triggerUpload() {
-      this.$refs.fileInput.click();
-    },
-
-    handleFileChange(event) {
-      this.file = event.target.files[0];
-      if (this.file) {
-        this.previewUrl = URL.createObjectURL(this.file);
+    handleImageChange(event) {
+      const file = event.target.files[0];
+      if (!file || !file.type.startsWith("image/")) {
+        this.dialogMessage = "Apenas arquivos de imagem são permitidos!";
+        this.dialogSuccess = false;
+        this.dialog = true;
+        return;
       }
+      this.imageFile = file;
+      this.imagePreview = URL.createObjectURL(file);
+    },
+    removeImage() {
+      this.imageFile = null;
+      this.imagePreview = null;
+      if (this.$refs.imageInput) this.$refs.imageInput.value = null;
+    },
+
+    handleAudioChange(event) {
+      const file = event.target.files[0];
+      if (!file || !file.type.startsWith("audio/")) {
+        this.dialogMessage = "Apenas arquivos de áudio são permitidos!";
+        this.dialogSuccess = false;
+        this.dialog = true;
+        return;
+      }
+      this.audioFile = file;
+      this.audioPreview = URL.createObjectURL(file);
+    },
+    removeAudio() {
+      this.audioFile = null;
+      this.audioPreview = null;
+      if (this.$refs.audioInput) this.$refs.audioInput.value = null;
     },
 
     async publishMeme() {
-  
-      this.errors = { title: "", file: "", videoUrl: "" };
+      // Reset erros
+      this.errors.title = "";
+      this.errors.file = "";
+      this.errors.videoUrl = "";
 
+      // Validações
       if (!this.title) this.errors.title = "O título é obrigatório.";
-      if (this.mediaType === "video" && !this.videoUrl)
-        this.errors.videoUrl = "A URL do vídeo é obrigatória.";
-      if (this.mediaType !== "video" && !this.file)
-        this.errors.file = "É necessário enviar um arquivo.";
+      if (this.mediaType === "video" && !this.videoUrl) this.errors.videoUrl = "A URL do vídeo é obrigatória.";
+      if (this.mediaType === "image" && !this.imageFile) this.errors.file = "É necessário enviar uma imagem.";
+      if (this.mediaType === "audio" && !this.audioFile) this.errors.file = "É necessário enviar um áudio.";
 
-      
       if (this.errors.title || this.errors.file || this.errors.videoUrl) {
         this.dialogMessage = "Preencha todos os campos obrigatórios antes de publicar.";
         this.dialogSuccess = false;
@@ -168,20 +219,29 @@ export default {
         let id;
         if (this.mediaType === "video") {
           id = await addMemeService.saveMeme(this.title, null, this.videoUrl);
-        } else {
-          id = await addMemeService.saveMeme(this.title, this.file);
+        } else if (this.mediaType === "image") {
+          id = await addMemeService.saveMeme(this.title, this.imageFile);
+        } else if (this.mediaType === "audio") {
+          id = await addMemeService.saveMeme(this.title, this.audioFile);
         }
 
         this.dialogMessage = "Meme publicado com sucesso!";
         this.dialogSuccess = true;
         this.dialog = true;
+
+        // Reset
         this.title = "";
-        this.file = null;
-        this.previewUrl = null;
+        this.imageFile = null;
+        this.imagePreview = null;
+        this.audioFile = null;
+        this.audioPreview = null;
         this.videoUrl = "";
-        this.$refs.fileInput.value = null;
-      } catch (err) {
-        console.error(err);
+
+        if (this.$refs.imageInput) this.$refs.imageInput.value = null;
+        if (this.$refs.audioInput) this.$refs.audioInput.value = null;
+
+      } catch (error) {
+        console.error(error);
         this.dialogMessage = "Erro ao publicar meme!";
         this.dialogSuccess = false;
         this.dialog = true;
@@ -221,10 +281,24 @@ export default {
   background-color: #f5f5f5;
 }
 
+.preview-wrapper,
+.preview-wrapper-audio {
+  position: relative;
+  display: inline-block;
+}
+
 .preview {
   max-width: 100%;
   max-height: 200px;
   border-radius: 8px;
+}
+
+.remove-icon,
+.remove-icon-audio {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  cursor: pointer;
 }
 
 .btn-meme {
@@ -234,18 +308,6 @@ export default {
   overflow: hidden;
   color: white;
 }
-.preview-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.remove-icon {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  cursor: pointer;
-  background-color: white;
-  border-radius: 50%;
-}
 </style>
+
 
