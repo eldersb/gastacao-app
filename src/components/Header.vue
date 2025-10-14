@@ -27,8 +27,9 @@
 
         <v-dialog v-model="dialog" max-width="400">
           <v-card>
-            <v-card-title class="text-h6">
-              Confirmar Logout
+            <v-card-title class="text-h6 d-flex align-center">
+                <v-icon color="red" class="me-2">mdi-exit-run</v-icon>
+                Vai se sair?
             </v-card-title>
 
             <v-card-text>
