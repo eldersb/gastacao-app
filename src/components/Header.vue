@@ -20,10 +20,28 @@
           icon
           variant="text"
           color="white"
-          @click="logout"
+          @click="dialog = true"
         >
           <v-icon>mdi-logout</v-icon>
         </v-btn>
+
+        <v-dialog v-model="dialog" max-width="400">
+          <v-card>
+            <v-card-title class="text-h6">
+              Confirmar Logout
+            </v-card-title>
+
+            <v-card-text>
+              Tem certeza que deseja sair da sua conta?
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn variant="text" color="primary" @click="dialog = false" :disabled="loading">Cancelar</v-btn>
+              <v-btn variant="tonal" color="red" @click="logout">Sair</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         </div>
   </v-app-bar>
 </template>
@@ -36,7 +54,10 @@ export default {
   name: "AppHeader",
   data() {
     return {
-      userStore: useUserStore()
+      userStore: useUserStore(),
+      dialog: false,
+      loading: false,
+
     };
   },
   computed: {
@@ -45,9 +66,21 @@ export default {
     }
   },
   methods: {
-    logout() {
-      authService.logout();
-      this.$router.push({ name: 'Login' });
+     async logout() {
+      if (this.loading) return;
+      this.loading = true;
+
+      try {
+        await authService.logout();
+        this.dialog = false;
+        await this.$nextTick();
+        this.$router.push({ name: 'Login' });
+      } catch (err) {
+        console.error('Erro no logout', err);
+        
+      } finally {
+        this.loading = false;
+      }
     }
   }
 

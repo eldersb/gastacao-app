@@ -8,6 +8,8 @@
       </v-card-subtitle>
 
       <v-card-text class="pa-6">
+
+
         <v-form ref="form" v-model="valid" @submit.prevent="handleLogin">
           <v-text-field
               v-model="email"
@@ -34,6 +36,16 @@
               density="comfortable"
               required
           />
+
+          <v-alert
+            v-if="errorMessage"
+            type="error"
+            variant="tonal"
+            border="start"
+            class="mb-4"
+          >
+          {{ errorMessage }}
+        </v-alert>
 
           <v-btn
               type="submit"
@@ -85,11 +97,13 @@ export default {
       showPassword: false,
       emailRules,
       passwordRules,
+      errorMessage: "",
     };
   },
   methods: {
     async handleLogin() {
       const {valid} = await this.$refs.form.validate();
+       this.errorMessage = "";
 
       if (valid) {
         this.loading = true;
@@ -101,6 +115,7 @@ export default {
 
           this.$router.push({name: "Home"});
         } catch (erro) {
+          this.errorMessage = "Usuário ou senha inválidos. Verifique e tente novamente.";
           this.loading = false
           console.log(erro)
         }
