@@ -15,7 +15,7 @@
         @dblclick="toggleLike(meme)"
       >
         <div class="meme-header">
-          <img v-if="meme.userAvatar" :src="meme.userAvatar" class="avatar" />
+          <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
           <span class="username">{{ meme.userName || 'Usuário' }}</span>
         </div>
 
@@ -23,7 +23,10 @@
 
         <div class="meme-content">
           <img v-if="meme.type === 'image'" :src="meme.url" alt="Meme" />
-          <video v-else-if="meme.type === 'video'" :src="meme.url" controls></video>
+          <YouTubePlayer
+              v-else-if="meme.type === 'video'"
+              :url="meme.url"
+          />
           <audio v-else-if="meme.type === 'audio'" :src="meme.url" controls></audio>
         </div>
 
@@ -47,6 +50,9 @@ import { db } from "../services/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { authService } from "../services/authService";
 import { memeService } from "../services/memeService";
+import { getAvatarById } from "../utils/avatars";
+import YouTubePlayer from "../components/YouTubePlayer.vue";
+
 
 const memes = ref([]);
 const loading = ref(true);
