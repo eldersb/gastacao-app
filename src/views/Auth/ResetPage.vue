@@ -18,7 +18,7 @@
                         <p class="text-body-2 text-grey mb-3">Já tem uma conta?</p>
                         <v-btn variant="outlined" color="primary" size="large" block class="text-none"
                             @click="$router.push('/login')">
-                            Lembro minha senha
+                            Lembrei da Senha Pivete
                         </v-btn>
                     </div>
                 </v-form>
