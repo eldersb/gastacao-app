@@ -3,7 +3,7 @@
  <v-bottom-navigation grow
       app
       height="64"
-      class="bg-primary"
+      style="background-color: #FF914D"
       active-color="white"
       inactive-color="white"
     >
