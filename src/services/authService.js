@@ -2,11 +2,12 @@ import {auth, db} from "./firebase";
 import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
-    signOut
+    signOut,
+    sendPasswordResetEmail
 } from "firebase/auth";
 import {doc, setDoc, getDoc, serverTimestamp} from "firebase/firestore";
 
-const USERS_COLLECTION = "users";
+ const USERS_COLLECTION = "users";
 
 export const authService = {
     async login(email, password) {
@@ -68,5 +69,10 @@ export const authService = {
         } else {
             return null;
         }
-    }
+    },
+
+  async resetPassword(email) {
+    await sendPasswordResetEmail(auth, email);
+  },
 };
+
