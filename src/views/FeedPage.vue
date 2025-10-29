@@ -1,6 +1,5 @@
 <template>
   <div class="feed-container">
-
     <div v-if="loading" class="loading">Carregando memes...</div>
 
     <div v-else-if="memes.length === 0" class="empty">
@@ -32,8 +31,10 @@
 
         <div class="meme-actions">
           <button @click="toggleLike(meme)" class="like-btn">
-            <span v-if="meme.liked">❤️</span>
-            <span v-else>🤍</span>
+            <i 
+              class="mdi" 
+              :class="meme.liked ? 'mdi-heart liked-heart' : 'mdi-heart-outline'"
+            ></i>
           </button>
           <span>{{ meme.likes || 0 }} curtidas</span>
         </div>
@@ -77,15 +78,40 @@ onMounted(async () => {
 const formatDate = (timestamp) => {
   if (!timestamp) return "";
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  return date.toLocaleString("pt-BR");
+  
+  
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
+
+  return date.toLocaleString("pt-BR", options);
 };
 
 const toggleLike = async (meme) => {
   if (!currentUser.value) return alert("Faça login para curtir");
 
-  await memeService.toggleLike(meme.id, currentUser.value.uid);
+  const isCurrentlyLiked = meme.liked;
+  meme.liked = !isCurrentlyLiked;
+  
+  if (isCurrentlyLiked) {
+    meme.likes = (meme.likes || 1) - 1;
+  } else {
+    meme.likes = (meme.likes || 0) + 1;
+  }
 
-  meme.likes = meme.liked ? (meme.likes || 0) + 1 : meme.likes - 1;
+  try {
+    await memeService.toggleLike(meme.id, currentUser.value.uid);
+  } catch (error) {
+    meme.liked = isCurrentlyLiked;
+    meme.likes = isCurrentlyLiked ? (meme.likes || 1) + 1 : meme.likes - 1;
+    console.error("Erro ao curtir:", error);
+    alert("Não foi possível processar o like. Tente novamente.");
+  }
 };
 </script>
 
@@ -95,7 +121,6 @@ const toggleLike = async (meme) => {
 
 
 .feed-container {
-  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   max-width: 800px;
   margin: 0 auto;
   padding: 16px;
@@ -168,6 +193,11 @@ const toggleLike = async (meme) => {
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 24px; 
+  padding: 0; 
+}
+
+.liked-heart {
+  color: #ff5252; 
 }
 </style>

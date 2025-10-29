@@ -21,7 +21,12 @@ export default {
 @import "@/assets/styles/main.scss";
 
 .auth-main {
-  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(180deg, $color-primary 0%, $color-secondary 100%);
 }
 
 .auth-container {
