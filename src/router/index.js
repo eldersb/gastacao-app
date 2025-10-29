@@ -9,6 +9,7 @@ import LoginPage from '@/views/Auth/LoginPage.vue'
 import RegisterPage from '@/views/Auth/RegisterPage.vue'
 import ProfilePage from '@/views/ProfilePage.vue'
 import AddMeme from '@/views/AddMeme.vue'
+import ResetPage from '@/views/Auth/ResetPage.vue'
 
 const routes = [
     {
@@ -25,7 +26,8 @@ const routes = [
         component: AuthLayout,
         children: [
             {path: 'login', name: 'Login', component: LoginPage},
-            {path: 'cadastro', name: 'Register', component: RegisterPage}
+            {path: 'cadastro', name: 'Register', component: RegisterPage},
+            {path: 'reset', name: 'Reset', component: ResetPage},
         ]
     }
 ]
@@ -39,10 +41,12 @@ router.beforeEach(async (to, from, next) => {
     try {
         const user = await authService.getCurrentUser();
 
-        const publicPages = ['Login', 'Register'];
+        const publicPages = ['Login', 'Register', 'Reset'];
 
         if (!publicPages.includes(to.name) && !user) return next({name: 'Login'});
         if (publicPages.includes(to.name) && user) return next({name: 'Home'});
+        if (publicPages.includes(to.name) && user) return next({name: 'Reset'});
+
 
         return next();
     } catch (error) {

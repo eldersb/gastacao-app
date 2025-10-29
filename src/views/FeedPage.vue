@@ -89,8 +89,13 @@ const toggleLike = async (meme) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/assets/styles/main.scss";
+
+
+
 .feed-container {
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   max-width: 800px;
   margin: 0 auto;
   padding: 16px;

@@ -36,6 +36,15 @@
               density="comfortable"
               required
           />
+          <v-btn
+               variant="text"
+               color="secondary"
+               block
+               class="text-none mb-4"
+                @click="$router.push({ name: 'Reset' })"
+               >
+               Esqueci minha senha
+            </v-btn>
 
           <v-alert
             v-if="errorMessage"
@@ -58,7 +67,8 @@
               elevation="2"
           >
             Entrar
-          </v-btn>
+            </v-btn>
+            
 
           <div class="text-center mt-6">
             <p class="text-body-2 text-grey mb-3">
