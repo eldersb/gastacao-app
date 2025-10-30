@@ -27,4 +27,8 @@ export default {
 .main {
     background:  $color-primary;
 }
+
+.v-main {
+    padding-top: 110px;
+}
 </style>
