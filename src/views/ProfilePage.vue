@@ -26,10 +26,32 @@
                 </p>
                 <p class="text-body-1 ml-6">{{ userStore.email }}</p>
             </div>
-        </div>
+            
+            <div class="mb-6 d-flex align-center justify-space-between">
+                <p class="text-subtitle-1 font-weight-bold text--darken-2 mb-0">
+                    <v-icon start color="#1c5a81">mdi-theme-light-dark</v-icon>
+                    Modo Noturno
+                </p>
+                <v-switch
+                  :model-value="isDarkTheme"
+                  @update:model-value="toggleTheme"
+                  color="#1c5a81"
+                  hide-details
+                  inset
+                  density="compact"
+                ></v-switch>
+            </div>
+            </div>
         
         <v-card-actions class="pa-4 pt-0">
-          <v-btn color="error" @click="dialog = true" variant="elevated" block size="large"> 
+          <v-btn 
+            color="error" 
+            @click="dialog = true" 
+            variant="elevated" 
+            block 
+            size="large"
+            :loading="loading"
+          > 
             <v-icon start>mdi-logout</v-icon>
             Sair da Conta
           </v-btn>
@@ -42,17 +64,26 @@
       <v-card>
         <v-card-title class="text-h6 d-flex align-center">
           <v-icon color="red" class="me-2">mdi-exit-run</v-icon>
-         Vai se sair?
+          Vai se sair?
         </v-card-title>
-
+        
+        <v-card-text class="text-center py-4">
+          <v-img 
+            :src="sadLaeleImage" 
+            alt="Personagem triste" 
+            max-height="120" 
+            max-width="120"
+            class="mx-auto"
+          ></v-img>
+        </v-card-text>
         <v-card-text>
           Tem certeza que deseja sair da sua conta?
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn variant="text" color="primary" @click="dialog = false">Cancelar</v-btn>
-          <v-btn variant="tonal" color="error" @click="confirmLogout">Sair</v-btn>
+          <v-btn variant="text" color="primary" @click="dialog = false" :disabled="loading">Cancelar</v-btn>
+          <v-btn variant="tonal" color="error" @click="confirmLogout" :loading="loading">Sair</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -63,31 +94,52 @@
 <script>
 import {useUserStore} from '@/stores/userStore';
 import {authService} from "@/services/authService";
+import sadLaeleImage from '@/assets/Laele-sad.png'; 
+import { useTheme } from 'vuetify'; 
 
 export default {
   name: "ProfilePage",
+  
+  setup() {
+    const theme = useTheme();
+    return {
+      theme,
+    };
+  },
 
   data() {
     return {
       userStore: useUserStore(),
-      dialog: false, // NOVO: Variável para controlar o modal
-      loading: false, // Opcional: Para controlar o estado de loading no botão Sair
+      dialog: false, 
+      loading: false, 
+      sadLaeleImage: sadLaeleImage, 
     }
   },
+  
+  computed: {
+
+    isDarkTheme() {
+      return this.theme.global.current.value.dark;
+    }
+  },
+
   methods: {
-    // MUDANÇA: Novo método para executar o logout e fechar o modal
+    toggleTheme() {
+      this.theme.global.name.value = this.isDarkTheme ? 'light' : 'dark';
+    },
+
     async confirmLogout() {
       if (this.loading) return;
-      this.loading = true; // Ativa o loading
+      this.loading = true;
 
       try {
         await authService.logout();
-        this.dialog = false; // Fecha o modal
+        this.dialog = false; 
         this.$router.push({name: 'Login'});
       } catch (error) {
         console.error('Erro ao sair da conta:', error);
       } finally {
-        this.loading = false; // Desativa o loading
+        this.loading = false; 
       }
     }
   }
