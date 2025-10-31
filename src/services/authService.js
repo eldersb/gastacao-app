@@ -3,7 +3,9 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    GoogleAuthProvider,
+    signInWithPopup, 
 } from "firebase/auth";
 import {doc, setDoc, getDoc, serverTimestamp} from "firebase/firestore";
 
@@ -73,6 +75,11 @@ export const authService = {
 
   async resetPassword(email) {
     await sendPasswordResetEmail(auth, email);
+  },
+
+    loginWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
   },
 };
 

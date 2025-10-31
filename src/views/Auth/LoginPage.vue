@@ -68,6 +68,17 @@
           >
             Entrar
             </v-btn>
+
+            <v-btn
+              block
+              color="red-darken-1"
+              size="large"
+              prepend-icon="mdi-google"
+              class="text-none"
+              @click="handleGoogleLogin"
+            >
+              Entrar com Google
+            </v-btn>
             
 
           <div class="text-center mt-6">
@@ -131,6 +142,32 @@ export default {
         }
       }
     },
+    async handleGoogleLogin() {
+  this.errorMessage = "";
+  this.loading = true;
+
+  try {
+    const userStore = useUserStore();
+    const { user } = await authService.loginWithGoogle();
+
+    // salva o usuário no store
+    userStore.setUser(user);
+
+    // redireciona pra Home
+    this.$router.push({ name: "Home" });
+  } catch (error) {
+    // mensagens específicas de erro (opcional)
+    if (error.code === "auth/popup-closed-by-user") {
+      this.errorMessage = "Login cancelado.";
+    } else {
+      this.errorMessage = "Erro ao entrar com Google.";
+    }
+    console.error(error);
+  } finally {
+    this.loading = false;
+  }
+}
+
   },
 };
 </script>
