@@ -10,9 +10,9 @@ export const useUserStore = defineStore('user', {
     }),
     actions: {
         setUser(user) {
-            this.name = user.name
-            this.email = user.email
-            this.avatar = user.avatar
+            this.name = user.name || "";
+            this.email = user.email || "";
+            this.avatar = user.avatar || null;
             this.setAvatar(this.avatar)
         },
         clearUser() {
