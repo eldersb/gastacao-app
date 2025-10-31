@@ -7,40 +7,43 @@
     </div>
 
     <div v-else class="memes-grid">
-      <div 
+      <v-card 
         v-for="meme in memes" 
         :key="meme.id" 
-        class="meme-card"
+        class="meme-card-vuetify"
+        elevation="3"
         @dblclick="toggleLike(meme)"
       >
-        <div class="meme-header">
-          <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
-          <span class="username">{{ meme.userName || 'Usuário' }}</span>
-        </div>
+        <v-card-text>
+          <div class="meme-header">
+            <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
+            <span class="username">{{ meme.userName || 'Usuário' }}</span>
+          </div>
 
-        <h3>{{ meme.title }}</h3>
+          <h3>{{ meme.title }}</h3>
 
-        <div class="meme-content">
-          <img v-if="meme.type === 'image'" :src="meme.url" alt="Meme" />
-          <YouTubePlayer
-              v-else-if="meme.type === 'video'"
-              :url="meme.url"
-          />
-          <audio v-else-if="meme.type === 'audio'" :src="meme.url" controls></audio>
-        </div>
+          <div class="meme-content">
+            <img v-if="meme.type === 'image'" :src="meme.url" alt="Meme" />
+            <YouTubePlayer
+                v-else-if="meme.type === 'video'"
+                :url="meme.url"
+            />
+            <audio v-else-if="meme.type === 'audio'" :src="meme.url" controls></audio>
+          </div>
 
-        <div class="meme-actions">
-          <button @click="toggleLike(meme)" class="like-btn">
-            <i 
-              class="mdi" 
-              :class="meme.liked ? 'mdi-heart liked-heart' : 'mdi-heart-outline'"
-            ></i>
-          </button>
-          <span>{{ meme.likes || 0 }} curtidas</span>
-        </div>
+          <div class="meme-actions">
+            <button @click="toggleLike(meme)" class="like-btn">
+              <i 
+                class="mdi" 
+                :class="meme.liked ? 'mdi-heart liked-heart' : 'mdi-heart-outline'"
+              ></i>
+            </button>
+            <span>{{ meme.likes || 0 }} curtidas</span>
+          </div>
 
-        <small>{{ formatDate(meme.createdAt) }}</small>
-      </div>
+          <small>{{ formatDate(meme.createdAt) }}</small>
+        </v-card-text>
+      </v-card>
     </div>
   </div>
 </template>
@@ -124,6 +127,7 @@ const toggleLike = async (meme) => {
   max-width: 800px;
   margin: 0 auto;
   padding: 16px;
+  
 }
 
 .loading, .empty {
@@ -137,17 +141,12 @@ const toggleLike = async (meme) => {
   margin-top: 20px;
 }
 
-.meme-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+.meme-card-vuetify {
   cursor: pointer;
   transition: transform 0.1s;
 }
 
-.meme-card:hover {
+.meme-card-vuetify:hover {
   transform: translateY(-2px);
 }
 

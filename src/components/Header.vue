@@ -29,7 +29,16 @@
             <v-icon color="red" class="me-2">mdi-exit-run</v-icon>
             Vai se sair?
           </v-card-title>
-
+          
+          <v-card-text class="text-center py-4">
+            <v-img 
+              :src="sadLaeleImage" 
+              alt="Personagem triste" 
+              max-height="120" 
+              max-width="120"
+              class="mx-auto"
+            ></v-img>
+          </v-card-text>
           <v-card-text>
             Tem certeza que deseja sair da sua conta?
           </v-card-text>
@@ -48,6 +57,7 @@
 <script>
 import { useUserStore } from '@/stores/userStore';
 import { authService } from "@/services/authService";
+import sadLaeleImage from '@/assets/Laele-sad.png'; 
 import {getAvatarById} from '@/utils/avatars';
 
 export default {
@@ -57,6 +67,7 @@ export default {
       userStore: useUserStore(),
       dialog: false,
       loading: false,
+      sadLaeleImage: sadLaeleImage,
     };
   },
 
