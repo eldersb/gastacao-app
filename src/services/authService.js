@@ -77,9 +77,43 @@ export const authService = {
     await sendPasswordResetEmail(auth, email);
   },
 
-    loginWithGoogle() {
+   async loginWithGoogle() {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-  },
+        
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            const userRef = doc(db, USERS_COLLECTION, user.uid);
+            const userDoc = await getDoc(userRef);
+            
+            if (!userDoc.exists()) {
+                // Usuário novo - cria o perfil
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    username: user.displayName || user.email.split('@')[0],
+                    avatarId: 7, 
+                    provider: 'google',
+                    createdAt: serverTimestamp(),
+                    isActive: true
+                });
+        
+                console.log("✅ Novo usuário Google cadastrado:", user.email);
+                
+            }
+
+            const userData = await this.getUserData(user.uid);
+
+            return {
+                uid: user.uid,
+                email: userData.email,
+                name: userData.username,
+                avatar: userData.avatarId,
+            };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 };
 

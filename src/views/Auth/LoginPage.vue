@@ -143,30 +143,28 @@ export default {
       }
     },
     async handleGoogleLogin() {
-  this.errorMessage = "";
-  this.loading = true;
+    this.errorMessage = "";
+    this.loading = true;
 
-  try {
-    const userStore = useUserStore();
-    const { user } = await authService.loginWithGoogle();
+    try {
+      const userStore = useUserStore();
+      const user = await authService.loginWithGoogle();
 
-    // salva o usuário no store
-    userStore.setUser(user);
+      userStore.setUser(user);
 
-    // redireciona pra Home
-    this.$router.push({ name: "Home" });
-  } catch (error) {
-    // mensagens específicas de erro (opcional)
-    if (error.code === "auth/popup-closed-by-user") {
-      this.errorMessage = "Login cancelado.";
-    } else {
-      this.errorMessage = "Erro ao entrar com Google.";
+      this.$router.push({ name: "Home" });
+    } catch (error) {
+    
+      if (error.code === "auth/popup-closed-by-user") {
+        this.errorMessage = "Login cancelado.";
+      } else {
+        this.errorMessage = "Erro ao entrar com Google.";
+      }
+      console.error(error);
+    } finally {
+      this.loading = false;
     }
-    console.error(error);
-  } finally {
-    this.loading = false;
   }
-}
 
   },
 };
