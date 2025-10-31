@@ -1,24 +1,19 @@
-# gozacao-app
+# gastacao-app
 
-## Project setup
-```
-npm install
-```
+O GastaçãoApp é uma aplicação Mobile desenvolvida para a disciplina de Desenvolvimento Mobile, utilizando tecnologias modernas da Web para proporcionar uma experiência leve e intuitiva.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 👨‍💻 Integrantes do Grupo
+- Elder Borges
+- Michel Souza
+- Railan Ibraim
+- Robert Wilson
+- Milton
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## 🧰 Tecnologias Utilizadas
+⚡ Vue.js
+🎨 Vuetify
+🔥 Firebase
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 🚀 Deploy da Aplicação no Vercel
+Acesse em:
+👉 https://gastacao-app-alpha.vercel.app/login
