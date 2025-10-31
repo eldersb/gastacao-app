@@ -10,8 +10,8 @@ O GastaçãoApp é uma aplicação Mobile desenvolvida para a disciplina de Dese
 - Milton
 
 ## 🧰 Tecnologias Utilizadas
-⚡ Vue.js
-🎨 Vuetify
+⚡ Vue.js <br>
+🎨 Vuetify <br>
 🔥 Firebase
 
 ## 🚀 Deploy da Aplicação no Vercel
