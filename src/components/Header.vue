@@ -4,7 +4,7 @@
       
       <div class="d-flex align-center">
         <v-avatar size="45" @click="goToProfile">
-          <v-img v-if="!isProfilePage" :src="userStore.avatarUrl" alt="Foto do usuário" cover />
+          <v-img v-if="!isProfilePage" :src="userAvatar" alt="Foto do usuário" cover />
         </v-avatar>
       </div>
 
@@ -48,6 +48,7 @@
 <script>
 import { useUserStore } from '@/stores/userStore';
 import { authService } from "@/services/authService";
+import {getAvatarById} from '@/utils/avatars';
 
 export default {
   name: "AppHeader",
@@ -62,6 +63,14 @@ export default {
   computed: {
     isProfilePage() {
       return this.$route.name === 'Profile';
+    },
+     userAvatar() {
+      // Se o usuário tiver avatarUrl, usa ele
+      if (this.userStore.avatarUrl) {
+        return this.userStore.avatarUrl;
+      }
+      // Caso contrário, retorna o avatar padrão (id 7)
+      return getAvatarById(7);
     }
   },
 

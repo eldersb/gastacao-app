@@ -8,7 +8,7 @@
         
         <v-avatar size="100" class="profile-avatar mb-3">
           <v-img
-              :src="userStore.avatarUrl"
+              :src="userAvatar"
               alt="Foto do usuário"
               cover
           />
@@ -63,6 +63,7 @@
 <script>
 import {useUserStore} from '@/stores/userStore';
 import {authService} from "@/services/authService";
+import {getAvatarById} from '@/utils/avatars';
 
 export default {
   name: "ProfilePage",
@@ -72,6 +73,14 @@ export default {
       userStore: useUserStore(),
       dialog: false, // NOVO: Variável para controlar o modal
       loading: false, // Opcional: Para controlar o estado de loading no botão Sair
+    }
+  },
+    computed: {
+    userAvatar() {
+      if (this.userStore.avatarUrl) {
+        return this.userStore.avatarUrl;
+      }
+      return getAvatarById(7);
     }
   },
   methods: {
