@@ -119,9 +119,6 @@ const toggleLike = async (meme) => {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/styles/main.scss";
-
-
 
 .feed-container {
   max-width: 800px;

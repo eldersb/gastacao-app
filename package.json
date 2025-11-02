@@ -24,8 +24,8 @@
     "@babel/eslint-parser": "^7.12.16",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "sass": "^1.93.2",
-    "sass-loader": "^16.0.5"
+    "sass": "^1.93.3",
+    "sass-loader": "^16.0.6"
   },
   "eslintConfig": {
     "root": true,

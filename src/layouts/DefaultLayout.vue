@@ -20,15 +20,14 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-
-@import "@/assets/styles/main.scss";
+<style lang="scss">
 
 .main {
     background:  $color-primary;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.v-main {
-    padding-top: 110px;
-}
 </style>

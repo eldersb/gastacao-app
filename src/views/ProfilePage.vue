@@ -1,6 +1,6 @@
 <template>
-  <v-container class="justify-center pt-2">
-    <v-card class="pa-0 profile-card" elevation="5">
+  <v-container class="d-flex justify-center pt-2">
+    <v-card class="pa-0 profile-card rounded-xl" elevation="5">
       
       <div class="profile-header-bg"></div> 
 
@@ -154,14 +154,11 @@ export default {
 
 <style scoped>
 
-.justify-center {
-    min-height: calc(100vh - 128px); 
-}
-
 .profile-card {
     max-width: 400px;
     width: 100%;
     margin-bottom: 20px; 
+    max-height: 450px;
 }
 
 
