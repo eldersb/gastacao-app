@@ -18,29 +18,41 @@ module.exports = defineConfig({
     display: 'standalone',
     orientation: 'portrait',
     startUrl: '/',
-    icons: [
-      {
-        src: './img/icons/android-chrome-192x192.png',
-        sizes: '192x192',
-        type: 'image/png'
-      },
-      {
-        src: './img/icons/android-chrome-512x512.png',
-        sizes: '512x512',
-        type: 'image/png'
-      },
-      {
-        src: './img/icons/android-chrome-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'any maskable'
-      },
-      {
-        src: './img/icons/apple-touch-icon.png',
-        sizes: '180x180',
-        type: 'image/png'
-      }
-    ],
+    
+    // Configuração dos favicons
+    iconPaths: {
+      faviconSVG: 'favicon.svg',
+      favicon32: 'img/icons/favicon-96x96.png',
+      favicon16: 'img/icons/favicon-96x96.png',
+      appleTouchIcon: 'img/icons/apple-touch-icon.png',
+      maskIcon: 'favicon.svg',
+      msTileImage: 'img/icons/android-chrome-512x512.png'
+    },
+    
+    // Ícones do manifest
+    manifestOptions: {
+      icons: [
+        {
+          src: './img/icons/android-chrome-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'any'
+        },
+        {
+          src: './img/icons/android-chrome-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any'
+        },
+        {
+          src: './img/icons/android-chrome-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable'
+        }
+      ]
+    },
+    
     workboxOptions: {
       skipWaiting: true,
       clientsClaim: true,
@@ -63,7 +75,7 @@ module.exports = defineConfig({
             cacheName: 'image-cache',
             expiration: {
               maxEntries: 100,
-              maxAgeSeconds: 2592000 
+              maxAgeSeconds: 2592000
             }
           }
         }
