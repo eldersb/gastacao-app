@@ -41,6 +41,11 @@
                   density="compact"
                 ></v-switch>
             </div>
+
+            <div class="mb-6 d-flex align-center justify-space-between">
+                <InstallApp/>
+            </div>
+
             </div>
         
         <v-card-actions class="pa-4 pt-0">
@@ -97,10 +102,16 @@ import {authService} from "@/services/authService";
 import sadLaeleImage from '@/assets/Laele-sad.png'; 
 import { useTheme } from 'vuetify'; 
 import {getAvatarById} from '@/utils/avatars';
+import InstallApp from '@/components/InstallApp.vue'; 
+
 
 export default {
   name: "ProfilePage",
   
+    components: {
+    InstallApp 
+  },
+
   setup() {
     const theme = useTheme();
     return {
