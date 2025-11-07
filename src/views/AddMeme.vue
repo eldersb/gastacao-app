@@ -1,5 +1,5 @@
 <template>
-  <v-container class="d-flex mt-5">
+  <v-container class="d-flex mt-5 justify-center">
     <v-card width="400" class="pa-4 rounded-xl mt-5">
       <v-card-title class="text-center">Criar Novo Meme</v-card-title>
 

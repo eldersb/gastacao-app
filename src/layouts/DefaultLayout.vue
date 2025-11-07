@@ -20,11 +20,14 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-
-@import "@/assets/styles/main.scss";
+<style lang="scss">
 
 .main {
-    background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%)
+    background:  $color-primary;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
 </style>

@@ -1,2 +1,7 @@
-@import "variables";
-@import "reset";
+@use "variables" as *;
+@use "reset";
+
+
+.v-application {
+  background-color: #59A5D8 !important; 
+}

@@ -32,6 +32,11 @@
             Entrar
           </v-btn>
 
+          <v-btn block color="red-darken-1" size="large" prepend-icon="mdi-google" class="text-none"
+            @click="handleGoogleLogin">
+            Entrar com Google
+          </v-btn>
+
 
           <div class="text-center mt-6">
             <p class="text-body-2 text-grey mb-3">
@@ -63,7 +68,7 @@ export default {
   },
   data() {
     return {
-      splashVisivel:false,
+      splashVisivel: false,
       valid: false,
       loading: false,
       email: "",
@@ -76,30 +81,56 @@ export default {
   },
   methods: {
     async handleLogin() {
-  const { valid } = await this.$refs.form.validate();
-  this.errorMessage = "";
+      const { valid } = await this.$refs.form.validate();
+      this.errorMessage = "";
 
-  if (valid) {
-    this.loading = true;
+      if (valid) {
+        this.loading = true;
 
-    try {
-      const userStore = useUserStore();
-      const user = await authService.login(this.email, this.password);
-      userStore.setUser(user);
+        try {
+          const userStore = useUserStore();
+          const user = await authService.login(this.email, this.password);
+          userStore.setUser(user);
+          this.splashFadeOut();
 
+        } catch (erro) {
+          this.errorMessage = "Usuário ou senha inválidos. Verifique e tente novamente.";
+          this.loading = false
+          console.log(erro)
+        }
+      }
+    },
+    splashFadeOut() {
       this.splashVisivel = true;
+
       setTimeout(() => {
         this.splashVisivel = false;
         this.$router.push({ name: "Home" });
-      }, 7000); 
+      }, 7000);
+    },
+    async handleGoogleLogin() {
+      this.errorMessage = "";
+      this.loading = true;
 
-    } catch (erro) {
-      this.errorMessage = "Usuário ou senha inválidos. Verifique e tente novamente.";
-      this.loading = false;
-      console.log(erro);
+      try {
+        const userStore = useUserStore();
+        const user = await authService.loginWithGoogle();
+
+        userStore.setUser(user);
+
+        this.splashFadeOut();
+      } catch (error) {
+
+        if (error.code === "auth/popup-closed-by-user") {
+          this.errorMessage = "Login cancelado.";
+        } else {
+          this.errorMessage = "Erro ao entrar com Google.";
+        }
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
     }
-  }
-}
 
   },
 };

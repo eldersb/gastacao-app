@@ -1,6 +1,5 @@
 <template>
   <div class="feed-container">
-
     <div v-if="loading" class="loading">Carregando memes...</div>
 
     <div v-else-if="memes.length === 0" class="empty">
@@ -8,38 +7,43 @@
     </div>
 
     <div v-else class="memes-grid">
-      <div 
+      <v-card 
         v-for="meme in memes" 
         :key="meme.id" 
-        class="meme-card"
+        class="meme-card-vuetify"
+        elevation="3"
         @dblclick="toggleLike(meme)"
       >
-        <div class="meme-header">
-          <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
-          <span class="username">{{ meme.userName || 'Usuário' }}</span>
-        </div>
+        <v-card-text>
+          <div class="meme-header">
+            <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
+            <span class="username">{{ meme.userName || 'Usuário' }}</span>
+          </div>
 
-        <h3>{{ meme.title }}</h3>
+          <h3>{{ meme.title }}</h3>
 
-        <div class="meme-content">
-          <img v-if="meme.type === 'image'" :src="meme.url" alt="Meme" />
-          <YouTubePlayer
-              v-else-if="meme.type === 'video'"
-              :url="meme.url"
-          />
-          <audio v-else-if="meme.type === 'audio'" :src="meme.url" controls></audio>
-        </div>
+          <div class="meme-content">
+            <img v-if="meme.type === 'image'" :src="meme.url" alt="Meme" />
+            <YouTubePlayer
+                v-else-if="meme.type === 'video'"
+                :url="meme.url"
+            />
+            <audio v-else-if="meme.type === 'audio'" :src="meme.url" controls></audio>
+          </div>
 
-        <div class="meme-actions">
-          <button @click="toggleLike(meme)" class="like-btn">
-            <span v-if="meme.liked">❤️</span>
-            <span v-else>🤍</span>
-          </button>
-          <span>{{ meme.likes || 0 }} curtidas</span>
-        </div>
+          <div class="meme-actions">
+            <button @click="toggleLike(meme)" class="like-btn">
+              <i 
+                class="mdi" 
+                :class="meme.liked ? 'mdi-heart liked-heart' : 'mdi-heart-outline'"
+              ></i>
+            </button>
+            <span>{{ meme.likes || 0 }} curtidas</span>
+          </div>
 
-        <small>{{ formatDate(meme.createdAt) }}</small>
-      </div>
+          <small>{{ formatDate(meme.createdAt) }}</small>
+        </v-card-text>
+      </v-card>
     </div>
   </div>
 </template>
@@ -77,28 +81,50 @@ onMounted(async () => {
 const formatDate = (timestamp) => {
   if (!timestamp) return "";
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  return date.toLocaleString("pt-BR");
+  
+  
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  };
+
+  return date.toLocaleString("pt-BR", options);
 };
 
 const toggleLike = async (meme) => {
   if (!currentUser.value) return alert("Faça login para curtir");
 
-  await memeService.toggleLike(meme.id, currentUser.value.uid);
+  const isCurrentlyLiked = meme.liked;
+  meme.liked = !isCurrentlyLiked;
+  
+  if (isCurrentlyLiked) {
+    meme.likes = (meme.likes || 1) - 1;
+  } else {
+    meme.likes = (meme.likes || 0) + 1;
+  }
 
-  meme.likes = meme.liked ? (meme.likes || 0) + 1 : meme.likes - 1;
+  try {
+    await memeService.toggleLike(meme.id, currentUser.value.uid);
+  } catch (error) {
+    meme.liked = isCurrentlyLiked;
+    meme.likes = isCurrentlyLiked ? (meme.likes || 1) + 1 : meme.likes - 1;
+    console.error("Erro ao curtir:", error);
+    alert("Não foi possível processar o like. Tente novamente.");
+  }
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/styles/main.scss";
-
-
 
 .feed-container {
-  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   max-width: 800px;
   margin: 0 auto;
   padding: 16px;
+  
 }
 
 .loading, .empty {
@@ -112,17 +138,12 @@ const toggleLike = async (meme) => {
   margin-top: 20px;
 }
 
-.meme-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+.meme-card-vuetify {
   cursor: pointer;
   transition: transform 0.1s;
 }
 
-.meme-card:hover {
+.meme-card-vuetify:hover {
   transform: translateY(-2px);
 }
 
@@ -168,6 +189,11 @@ const toggleLike = async (meme) => {
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 24px; 
+  padding: 0; 
+}
+
+.liked-heart {
+  color: #ff5252; 
 }
 </style>
