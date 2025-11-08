@@ -16,10 +16,22 @@
       >
         <v-card-text>
           <div class="meme-header">
-            <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
-            <span class="username">{{ meme.userName || 'Usuário' }}</span>
+            <div class="user-info">
+              <img v-if="meme.userAvatar" :src ="getAvatarById (meme.userAvatar)" class="avatar" />
+              <span class="username">{{ meme.userName || 'Usuário' }}</span>
+            </div>
+           
+             <button 
+              v-if="currentUser?.uid === meme.userId" 
+              @click="openDeleteDialog(meme.id)" 
+              class="delete-btn"
+            >
+              <i class="mdi mdi-delete"></i> 
+            </button>
+
           </div>
 
+    
           <h3>{{ meme.title }}</h3>
 
           <div class="meme-content">
@@ -42,9 +54,25 @@
           </div>
 
           <small>{{ formatDate(meme.createdAt) }}</small>
+
         </v-card-text>
       </v-card>
     </div>
+
+      <v-dialog v-model="showDeleteDialog" max-width="400px">
+      <v-card>
+        <v-card-title class="text-h6">
+          <v-icon color="warning" class="mr-2" >mdi-alert</v-icon>
+          Tem certeza?
+          </v-card-title>
+        <v-card-text  class="text-center">Se remover não voltará a ver este conteudo!</v-card-text>
+        <v-card-actions>
+          <v-btn text color="grey" @click="showDeleteDialog = false">Cancelar</v-btn>
+          <v-btn color="red" @click="confirmDelete">Remover</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -62,6 +90,10 @@ const memes = ref([]);
 const loading = ref(true);
 const currentUser = ref(null);
 
+// estado do modal
+const showDeleteDialog = ref(false);
+const memeToDelete = ref(null);
+
 onMounted(async () => {
   currentUser.value = await authService.getCurrentUser();
 
@@ -77,6 +109,24 @@ onMounted(async () => {
     loading.value = false;
   });
 });
+
+const openDeleteDialog = (id) => {
+  memeToDelete.value = id;
+  showDeleteDialog.value = true;
+};
+
+const confirmDelete = async () => {
+  try {
+    await memeService.deleteMeme(memeToDelete.value);
+    memes.value = memes.value.filter(m => m.id !== memeToDelete.value);
+  } catch (error) {
+    console.error("Erro ao remover meme:", error);
+    alert("Não foi possível remover o meme. Tente novamente.");
+  } finally {
+    showDeleteDialog.value = false;
+    memeToDelete.value = null;
+  }
+};
 
 const formatDate = (timestamp) => {
   if (!timestamp) return "";
@@ -115,6 +165,18 @@ const toggleLike = async (meme) => {
     console.error("Erro ao curtir:", error);
     alert("Não foi possível processar o like. Tente novamente.");
   }
+
+};
+
+  const deleteMeme = async (memeId) => {
+  if (!confirm("Tem certeza que deseja remover este meme?")) return;
+  try {
+    await memeService.deleteMeme(memeId);
+    memes.value = memes.value.filter(m => m.id !== memeId);
+  } catch (error) {
+    console.error("Erro ao remover meme:", error);
+    alert("Não foi possível remover o meme. Tente novamente.");
+  }
 };
 </script>
 
@@ -150,8 +212,14 @@ const toggleLike = async (meme) => {
 .meme-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
   margin-bottom: 6px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
 }
 
 .avatar {
@@ -196,4 +264,21 @@ const toggleLike = async (meme) => {
 .liked-heart {
   color: #ff5252; 
 }
+
+
+.delete-btn {
+  border: none;
+  background: transparent;
+  color: #f44336;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.delete-btn:hover {
+  color: #d32f2f;
+}
+
 </style>
