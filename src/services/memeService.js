@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { doc, runTransaction } from "firebase/firestore";
+import { doc, deleteDoc, runTransaction } from "firebase/firestore";
 
 export const memeService = {
   async toggleLike(memeId, userId) {
@@ -25,5 +25,10 @@ export const memeService = {
 
       transaction.update(memeRef, { likes, likedBy });
     });
+  },
+
+   async deleteMeme(id) {
+    const memeRef = doc(db, "memes", id);
+    await deleteDoc(memeRef);
   }
 };
