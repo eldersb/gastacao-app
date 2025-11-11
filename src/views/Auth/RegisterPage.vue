@@ -44,9 +44,11 @@
               prepend-inner-icon="mdi-email"
               variant="outlined"
               :rules="emailRules"
+              :error-messages="emailError ? emailError : []"
               class="mb-3"
               density="comfortable"
               required
+              @input="emailError = ''"
           />
 
           <v-text-field
@@ -122,6 +124,7 @@ export default {
       loading: false,
       username: '',
       email: '',
+      emailError: '',
       password: '',
       confirmPassword: '',
       showPassword: false,
@@ -163,6 +166,13 @@ export default {
       } catch (erro) {
         console.error(erro);
         this.loading = false;
+
+        if (erro.message?.includes("auth/email-already-in-use")){
+          this.emailError = "Este e-mail já está em uso";
+        } else {
+          this.emailError = '';
+        }
+
       }
     }
   }
