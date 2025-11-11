@@ -10,8 +10,7 @@ O GastaçãoApp é uma aplicação Mobile desenvolvida para a disciplina de Dese
 - Vercel: Deploy
 
 ## 🚀 Deploy da Aplicação no Vercel
-Acesse em:
-👉 https://gastacao-app-alpha.vercel.app/login
+https://gastacao-app-alpha.vercel.app/login
 
 ## Imagens
 <img width="386" height="838" alt="image" src="https://github.com/user-attachments/assets/71f46a64-778f-4c72-b239-51043c394090" />
