@@ -1,6 +1,6 @@
 # gastacao-app
 
-O GastaçãoApp é uma aplicação Mobile desenvolvida para a disciplina de Desenvolvimento Mobile, utilizando tecnologias modernas da Web para proporcionar uma experiência leve e intuitiva.
+O GastaçãoApp é uma aplicação Web App desenvolvida para a disciplina de Desenvolvimento Mobile, utilizando tecnologias modernas da Web para proporcionar uma experiência leve e intuitiva.
 
 ## 🧰 Tecnologias Utilizadas
 -  Vue.js: Framework JavaScript progressivo
